@@ -110,9 +110,9 @@ def main():
     x = 1
     try:
         while True:
-            if distance() > 1:
+            if distance() > 10:
                 wheelie.goForward()
-            if distance() < 1:
+            else:
                 wheelie.stop()
     finally:
         GPIO.cleanup()
