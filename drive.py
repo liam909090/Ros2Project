@@ -18,11 +18,6 @@ class Motor:
         GPIO.setup(pinFwd, GPIO.OUT)
         GPIO.setup(pinBack, GPIO.OUT)
 
-        # Checks if a PWM object already exists for the GPIO pins
-        if GPIO.PWM(pinFwd, 0).is_running() or GPIO.PWM(pinBack, 0).is_running():
-            GPIO.PWM(pinFwd, 0).stop()
-            GPIO.PWM(pinBack, 0).stop()
-
         #  Get a handle to PWM
         self._frequency = frequency
         self._maxSpeed = maxSpeed
