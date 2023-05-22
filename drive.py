@@ -1,5 +1,8 @@
 #! /usr/bin/python3
 
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
 import RPi.GPIO as GPIO
 import time
 
@@ -10,6 +13,28 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
+
+class WallE(Node):
+    def __init__(self):
+        super().__init__('Wall-E')
+        self.subscription = self.create_subscription(
+            String,
+            'Rijden',
+            self.listener_callback,
+            10
+        )
+        self.subscriptionwarning
+        self.wheelie = Wheelie()
+
+    def listener_callback(self, msg):
+        command = msg.data
+        if command == 'forward' :
+            if distance() > 10:
+                Wheelie.goForward()
+            else:
+                Wheelie.stop()
+        elif command == 'backwards' :
+            Wheelie.goBackward()
 
 
 class Motor:
@@ -104,19 +129,3 @@ def distance():
     print("%.1f in" % distanceIPS)
     return distanceIPS
 
-
-def main():
-    wheelie = Wheelie()
-    x = 1
-    try:
-        while True:
-            if distance() > 10:
-                wheelie.goForward()
-            else:
-                wheelie.stop()
-    finally:
-        GPIO.cleanup()
-
-
-if __name__ == "__main__":
-    main()
