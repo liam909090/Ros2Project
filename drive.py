@@ -89,19 +89,19 @@ class Wheelie:
         self.leftWheel.stop()
         self.rightWheel.stop()
 
-    def goForward(self, speed=20):
+    def goForward(self, speed=40):
         self.rightWheel.forwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goBackward(self, speed=20):
+    def goBackward(self, speed=40):
         self.rightWheel.backwards(speed)
         self.leftWheel.backwards(speed)
 
-    def goLeft(self, speed=20):
+    def goRight(self, speed=40):
         self.rightWheel.backwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goRight(self, speed=20):
+    def goLeft(self, speed=40):
         self.rightWheel.forwards(speed)
         self.leftWheel.backwards(speed)
 
