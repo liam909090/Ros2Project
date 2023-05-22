@@ -37,6 +37,8 @@ class WallE(Node):
             self.wheelie.goBackward()
         elif command == 'stop' :
             self.wheelie.stop()
+        elif command == "right" :
+            self.wheelie.goRight()
 
 
 class Motor:
