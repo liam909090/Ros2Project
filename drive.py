@@ -34,6 +34,8 @@ class WallE(Node):
                 Wheelie.stop()
         elif command == 'backwards' :
             Wheelie.goBackward()
+        elif command == 'stop' :
+            Wheelie.stop()
 
 
 class Motor:
