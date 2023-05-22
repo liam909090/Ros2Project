@@ -23,7 +23,6 @@ class WallE(Node):
             self.listener_callback,
             10
         )
-        self.subscription.warning
         self.wheelie = Wheelie()
 
     def listener_callback(self, msg):
