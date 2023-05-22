@@ -32,7 +32,7 @@ class WallE(Node):
             if distance() > 10:
                 self.wheelie.goForward()
             else:
-                self.wheelie.stop()
+                self.wheelie.goRight()
         elif command == 'backwards' :
             self.wheelie.goBackward()
         elif command == 'stop' :
