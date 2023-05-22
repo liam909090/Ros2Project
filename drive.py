@@ -129,3 +129,14 @@ def distance():
     print("%.1f in" % distanceIPS)
     return distanceIPS
 
+def main(args=None):
+    rclpy.init(args=args)
+    rclpy.spin(WallE())
+
+    WallE().wheelie.stop()
+    GPIO.cleanup()
+    WallE().destroy_node()
+    rclpy.shutdown()
+    
+if __name__ == '__main__' :
+    main()
