@@ -27,15 +27,16 @@ class WallE(Node):
 
     def listener_callback(self, msg):
         command = msg.data
+        wheelie = Wheelie
         if command == 'forward' :
             if distance() > 10:
-                Wheelie.goForward()
+                self.wheelie.goForward()
             else:
-                Wheelie.stop()
+                self.wheelie.stop()
         elif command == 'backwards' :
-            Wheelie.goBackward()
+            self.wheelie.goBackward()
         elif command == 'stop' :
-            Wheelie.stop()
+            self.wheelie.stop()
 
 
 class Motor:
