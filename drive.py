@@ -16,7 +16,7 @@ GPIO.setup(pinEcho, GPIO.IN)
 
 class WallE(Node):
     def __init__(self):
-        super().__init__('Wall-E')
+        super().__init__('Wall_E')
         self.subscription = self.create_subscription(
             String,
             'Rijden',
@@ -137,6 +137,6 @@ def main(args=None):
     GPIO.cleanup()
     WallE().destroy_node()
     rclpy.shutdown()
-    
+
 if __name__ == '__main__' :
     main()
