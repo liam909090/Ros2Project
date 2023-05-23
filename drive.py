@@ -56,12 +56,12 @@ class Wielen(Node):
             self.listener_callback_Wielen,
             10
         )
-        self.wheels = Wheels()
+        
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_Wielen(self, msg):
         command = msg.data
-        wheels = Wheels
+        
         if command == 'forward' :
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
@@ -175,6 +175,11 @@ def main(args=None):
     Wielen().wheels.stop()
     GPIO.cleanup()
     Wielen().destroy_node()
+    rclpy.shutdown()
+
+    Sensor().distance() == 10
+    GPIO.cleanup()
+    Sensor().destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__' :
