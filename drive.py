@@ -1,10 +1,11 @@
 #! /usr/bin/python3
 
+#impoteerd modules
+import time
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 import RPi.GPIO as GPIO
-import time
 
 pinTrigger = 17
 pinEcho = 18
@@ -16,6 +17,7 @@ GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
 
+# zet de node op voor ros2
 class WallE(Node):
     def __init__(self):
         super().__init__('Wall_E')
@@ -27,6 +29,7 @@ class WallE(Node):
         )
         self.wheelie = Wheelie()
 
+    # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback(self, msg):
         command = msg.data
         wheelie = Wheelie
@@ -46,7 +49,7 @@ class WallE(Node):
 
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
-        #  Configure GPIO
+        #  Steld de GPIO in
         GPIO.setup(pinFwd, GPIO.OUT)
         GPIO.setup(pinBack, GPIO.OUT)
 
@@ -59,22 +62,22 @@ class Motor:
         self._pwmBack.start(0)
 
     def forwards(self, speed):
-        self._move(speed)
+        self.move(speed)
 
     def backwards(self, speed):
-        self._move(-speed)
+        self.move(-speed)
 
     def stop(self):
-        self._move(0)
+        self.move(0)
 
-    def _move(self, speed):
-        #  Set limits
+    def move(self, speed):
+        #  Zet snelheids limit in
         if speed > self._maxSpeed:
             speed = self._maxSpeed
         if speed < -self._maxSpeed:
             speed = -self._maxSpeed
 
-        #  Turn on the motors
+        #  doet de moters aan
         if speed < 0:
             self._pwmFwd.ChangeDutyCycle(0)
             self._pwmBack.ChangeDutyCycle(-speed)
@@ -82,7 +85,7 @@ class Motor:
             self._pwmFwd.ChangeDutyCycle(speed)
             self._pwmBack.ChangeDutyCycle(0)
 
-
+# class om de wielen aan te sturen
 class Wheelie:
     def __init__(self):
         self.rightWheel = Motor(10, 9)
