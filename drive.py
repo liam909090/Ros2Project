@@ -8,11 +8,13 @@ import time
 
 pinTrigger = 17
 pinEcho = 18
+PinLight = 25
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
+GPIO.setup(PinLight, GPIO.IN)
 
 class WallE(Node):
     def __init__(self):
@@ -29,10 +31,11 @@ class WallE(Node):
         command = msg.data
         wheelie = Wheelie
         if command == 'forward' :
-            if distance() > 10:
-                self.wheelie.goForward()
-            else:
-                self.wheelie.goRight()
+            if GPIO.input(PinLight) == 1:
+                if distance() > 10:
+                    self.wheelie.goForward()
+                else:
+                    self.wheelie.goRight()
         elif command == 'backwards' :
             self.wheelie.goBackward()
         elif command == 'stop' :
