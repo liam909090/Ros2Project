@@ -28,24 +28,24 @@ class Wielen(Node):
             self.listener_callback_Wielen,
             10
         )
-        self.wheelie = Wheelie()
+        self.wheels = Wheels()
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_Wielen(self, msg):
         command = msg.data
-        wheelie = Wheelie
+        wheels = Wheels
         if command == 'forward' :
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheelie.goForward()
+                    self.wheels.goForward()
                 else:
-                    self.wheelie.goRight()
+                    self.wheels.goRight()
         elif command == 'backwards' :
-            self.wheelie.goBackward()
+            self.wheels.goBackward()
         elif command == 'stop' :
-            self.wheelie.stop()
+            self.wheels.stop()
         elif command == "right" :
-            self.wheelie.goRight()
+            self.wheels.goRight()
 
 
 class Motor:
@@ -87,7 +87,7 @@ class Motor:
             self._pwmBack.ChangeDutyCycle(0)
 
 # class om de wielen aan te sturen
-class Wheelie:
+class Wheels:
     def __init__(self):
         self.rightWheel = Motor(10, 9)
         self.leftWheel = Motor(8, 7)
@@ -144,7 +144,7 @@ def main(args=None):
     rclpy.init(args=args)
     rclpy.spin(Wielen())
 
-    Wielen().wheelie.stop()
+    Wielen().wheels.stop()
     GPIO.cleanup()
     Wielen().destroy_node()
     rclpy.shutdown()
