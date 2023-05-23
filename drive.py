@@ -18,6 +18,34 @@ GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
 
+#node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
+class Sensor(Node):
+    def __init__(self):
+        super().__init__('_sensor_')
+        self.subscription = self.create_subscription(
+            String,
+            'SensorAfstand',
+            self.listener_callback_sensor,
+            10
+        )
+        self.wheels = Wheels() #Moet dit iets anders worden?
+
+    # luisterd naar commands en onderneemd acties op basis van het command
+    def listener_callback_sensor(self, msg):
+        command = msg.data
+        wheels = Wheels
+        if distance() > max_distance:
+            if command == 'distance1':
+                max_distance += 1
+            elif command == 'distanceno1':
+                max_distance -= 1
+            elif command == 'distance10':
+                max_distance += 10
+            elif command == 'distanceno10':
+                max_distance -= 10
+        
+
+
 # zet de node op voor ros2
 class Wielen(Node):
     def __init__(self):
