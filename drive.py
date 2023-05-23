@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 pinTrigger = 17
 pinEcho = 18
 PinLight = 25
+max_distance = 10
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -18,24 +19,24 @@ GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
-class WallE(Node):
+class Wielen(Node):
     def __init__(self):
-        super().__init__('Wall_E')
+        super().__init__('_Wielen_')
         self.subscription = self.create_subscription(
             String,
             'Rijden',
-            self.listener_callback,
+            self.listener_callback_Wielen,
             10
         )
         self.wheelie = Wheelie()
 
     # luisterd naar commands en onderneemd acties op basis van het command
-    def listener_callback(self, msg):
+    def listener_callback_Wielen(self, msg):
         command = msg.data
         wheelie = Wheelie
         if command == 'forward' :
             if GPIO.input(PinLight) == 1:
-                if distance() > 10:
+                if distance() > max_distance:
                     self.wheelie.goForward()
                 else:
                     self.wheelie.goRight()
@@ -49,7 +50,7 @@ class WallE(Node):
 
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
-        #  Steld de GPIO in
+        #  Stelt de GPIO in
         GPIO.setup(pinFwd, GPIO.OUT)
         GPIO.setup(pinBack, GPIO.OUT)
 
@@ -116,13 +117,13 @@ def distance():
     GPIO.output(pinTrigger, False)
     time.sleep(0.5)
 
-    #  Send a 10us pulse
+    #  Stuurt een pulse 
     print("send pulse")
     GPIO.output(pinTrigger, True)
     time.sleep(0.00001)
     GPIO.output(pinTrigger, False)
 
-    #  Wait for echo to go high, then low
+    #  wacht tot de echo terug komt 
     StartTime = time.time()
     while GPIO.input(pinEcho) == 0:
         StartTime = time.time()
@@ -141,11 +142,11 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(WallE())
+    rclpy.spin(Wielen())
 
-    WallE().wheelie.stop()
+    Wielen().wheelie.stop()
     GPIO.cleanup()
-    WallE().destroy_node()
+    Wielen().destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__' :
