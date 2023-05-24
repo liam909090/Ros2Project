@@ -28,20 +28,20 @@ class Sensor(Node):
             self.listener_callback_sensor,
             10
         )
-        self.wheels = Wheels() #Moet dit iets anders worden?
+        
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_sensor(self, msg):
         command = msg.data
-        wheels = Wheels
+        
         if distance() > max_distance:
             if command == 'distance1':
                 max_distance += 1
-            elif command == 'distanceno1':
+            elif command == 'distancemin1':
                 max_distance -= 1
             elif command == 'distance10':
                 max_distance += 10
-            elif command == 'distanceno10':
+            elif command == 'distancemin10':
                 max_distance -= 10
         
 
@@ -56,12 +56,12 @@ class Wielen(Node):
             self.listener_callback_Wielen,
             10
         )
-        
+        self.wheels = Wheels() #Moet dit iets anders worden?
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_Wielen(self, msg):
         command = msg.data
-        
+        wheels = Wheels
         if command == 'forward' :
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
