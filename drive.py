@@ -17,29 +17,6 @@ GPIO.setwarnings(False)
 GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
-
-#node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
-class Sensor(Node):
-    def __init__(self):
-        super().__init__('_sensor_')
-        self.subscription = self.create_subscription(
-            String,
-            'SensorAfstand',
-            self.listener_callback_sensor,
-            10
-        )
-
-    # luisterd naar commands en onderneemd acties op basis van het command
-    def listener_callback_sensor(self, msg):
-        command = msg.data
-        if command == 'distance1':
-            max_distance += 1
-        elif command == 'distancemin1':
-            max_distance -= 1
-        elif command == 'distance10':
-            max_distance += 10
-        elif command == 'distancemin10':
-            max_distance -= 10
         
 
 
@@ -71,6 +48,29 @@ class Wielen(Node):
             self.wheels.stop()
         elif command == "right" :
             self.wheels.goRight()
+
+#node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
+class Sensor(Node):
+    def __init__(self):
+        super().__init__('_sensor_')
+        self.subscription = self.create_subscription(
+            String,
+            'SensorAfstand',
+            self.listener_callback_sensor,
+            10
+        )
+
+    # luisterd naar commands en onderneemd acties op basis van het command
+    def listener_callback_sensor(self, msg):
+        command = msg.data
+        if command == 'distance1':
+            max_distance += 1
+        elif command == 'distancemin1':
+            max_distance -= 1
+        elif command == 'distance10':
+            max_distance += 10
+        elif command == 'distancemin10':
+            max_distance -= 10
 
 
 class Motor:
