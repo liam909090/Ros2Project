@@ -18,7 +18,7 @@ GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
 
-# zet de node op voor ros2
+# zet de node "Wielen" op voor ros2
 class Wielen(Node):
     def __init__(self):
         super().__init__('_Wielen_')
