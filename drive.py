@@ -28,21 +28,18 @@ class Sensor(Node):
             self.listener_callback_sensor,
             10
         )
-        
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_sensor(self, msg):
         command = msg.data
-        
-        if distance() > max_distance:
-            if command == 'distance1':
-                max_distance += 1
-            elif command == 'distancemin1':
-                max_distance -= 1
-            elif command == 'distance10':
-                max_distance += 10
-            elif command == 'distancemin10':
-                max_distance -= 10
+        if command == 'distance1':
+            max_distance += 1
+        elif command == 'distancemin1':
+            max_distance -= 1
+        elif command == 'distance10':
+            max_distance += 10
+        elif command == 'distancemin10':
+            max_distance -= 10
         
 
 
@@ -170,7 +167,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wielen(), Sensor())
+    rclpy.spin(Wielen, Sensor)
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
