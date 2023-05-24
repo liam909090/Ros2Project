@@ -170,8 +170,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wielen())
-    rclpy.spin(Sensor())
+    rclpy.spin(Wielen(), Sensor())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
