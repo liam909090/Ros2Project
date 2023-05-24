@@ -171,15 +171,13 @@ def distance():
 def main(args=None):
     rclpy.init(args=args)
     rclpy.spin(Wielen())
+    rclpy.spin(Sensor())
 
     Wielen().wheels.stop()
-    GPIO.cleanup()
     Wielen().destroy_node()
-    rclpy.shutdown()
-
     Sensor().distance() == 10
-    GPIO.cleanup()
     Sensor().destroy_node()
+    GPIO.cleanup()
     rclpy.shutdown()
 
 if __name__ == '__main__' :
