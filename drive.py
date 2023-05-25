@@ -77,7 +77,7 @@ class Sensor(Node):
     
 class Joystick(Node):
     def __init__(self):
-        self.subscription = self.create_subscription(
+        self._joy_subscription = self.create_subscription(
         Joy,
         'joy',
         self._joy_callback,
@@ -197,13 +197,13 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Joy())
+    rclpy.spin(Joystick())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
     Sensor().distance() == 10
     Sensor().destroy_node()
-    Joy().destroy_Node()
+    Joystick().destroy_Node()
     GPIO.cleanup()
     rclpy.shutdown()
 
