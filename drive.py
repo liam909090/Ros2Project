@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-#impoteerd modules
+# impoteerd modules
 import time
 import rclpy
 from rclpy.node import Node
@@ -19,89 +19,84 @@ GPIO.setwarnings(False)
 GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
-        
 
 
 # zet de node op voor ros2
 class Wielen(Node):
     def __init__(self):
-        super().__init__('_Wielen_')
+        super().__init__("_Wielen_")
         self.subscription = self.create_subscription(
-            String,
-            'Rijden',
-            self.listener_callback_Wielen,
-            10
+            String, "Rijden", self.listener_callback_Wielen, 10
         )
-        self.wheels = Wheels() #Moet dit iets anders worden?
+        self.wheels = Wheels()  # Moet dit iets anders worden?
+
+        self._joy_subscription = self.create_subscription(
+            Joy, "joy", self._joy_callback, 5
+        )
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_Wielen(self, msg):
         command = msg.data
         wheels = Wheels
-        if command == 'forward' :
+        if command == "forward":
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
                     self.wheels.goForward()
                 else:
                     self.wheels.goRight()
-        elif command == 'backwards' :
+        elif command == "backwards":
             self.wheels.goBackward()
-        elif command == 'stop' :
+        elif command == "stop":
             self.wheels.stop()
-        elif command == "right" :
+        elif command == "right":
             self.wheels.goRight()
 
-#node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
+    def _joy_callback(self, msg):
+        """Translate XBox buttons into speed and spin
+
+        Just use the left joystick (for now):
+        LSB left/right  axes[0]     +1 (left) to -1 (right)
+        LSB up/down     axes[1]     +1 (up) to -1 (back)
+        LB              buttons[5]  1 pressed, 0 otherwise
+        """
+
+        if abs(msg.axes[0]) > 0.10:
+            self.spin = msg.axes[0]
+        else:
+            self.spin = 0.0
+
+        if abs(msg.axes[1]) > 0.10:
+            self.speed = msg.axes[1]
+        else:
+            self.speed = 0.0
+
+        if msg.buttons[5] == 1:
+            self.speed = 0
+            self.spin = 0
+
+        self._set_motor_speeds()
+
+
+# node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
 class Sensor(Node):
     def __init__(self):
-        super().__init__('_sensor_')
+        super().__init__("_sensor_")
         self.subscription = self.create_subscription(
-            String,
-            'SensorAfstand',
-            self.listener_callback_sensor,
-            10
+            String, "SensorAfstand", self.listener_callback_sensor, 10
         )
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_sensor(self, msg):
         command = msg.data
-        if command == 'distance1':
+        if command == "distance1":
             max_distance += 1
-        elif command == 'distancemin1':
+        elif command == "distancemin1":
             max_distance -= 1
-        elif command == 'distance10':
+        elif command == "distance10":
             max_distance += 10
-        elif command == 'distancemin10':
+        elif command == "distancemin10":
             max_distance -= 10
 
-    
-class Joystick(Node):
-    def __init__(self):
-        self._joy_subscription = self.create_subscription(
-        Joy,
-        'joy',
-        self._joy_callback,
-        5)
-
-    def _joy_callback(self, msg):
-        if abs(msg.axes[0]) > 0.10:
-            self.spin = msg.axes[0]
-            print(msg.axes[0])
-        else:
-            self.spin = 0.0
-
-        if abs(msg.axes[1] > 0.10):
-            self.speed = msg.axes[1]
-            print(msg.axes[1])
-        else:
-            self.speed = 0.0
-
-        if msg.button[5] == 1:
-            self.speed = 0
-            self.spin = 0
-            print("Stopping")
-
-            self._set_motor_speeds()
 
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
@@ -141,6 +136,7 @@ class Motor:
             self._pwmFwd.ChangeDutyCycle(speed)
             self._pwmBack.ChangeDutyCycle(0)
 
+
 # class om de wielen aan te sturen
 class Wheels:
     def __init__(self):
@@ -172,13 +168,13 @@ def distance():
     GPIO.output(pinTrigger, False)
     time.sleep(0.5)
 
-    #  Stuurt een pulse 
+    #  Stuurt een pulse
     print("send pulse")
     GPIO.output(pinTrigger, True)
     time.sleep(0.00001)
     GPIO.output(pinTrigger, False)
 
-    #  wacht tot de echo terug komt 
+    #  wacht tot de echo terug komt
     StartTime = time.time()
     while GPIO.input(pinEcho) == 0:
         StartTime = time.time()
@@ -195,6 +191,7 @@ def distance():
     print("%.1f in" % distanceIPS)
     return distanceIPS
 
+
 def main(args=None):
     rclpy.init(args=args)
     rclpy.spin(Joystick())
@@ -207,5 +204,6 @@ def main(args=None):
     GPIO.cleanup()
     rclpy.shutdown()
 
-if __name__ == '__main__' :
+
+if __name__ == "__main__":
     main()
