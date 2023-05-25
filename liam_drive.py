@@ -77,6 +77,8 @@ class Wielen(Node):
             self.wheels.goLeft()
         elif msg.buttons[6] == 1:  # gaat naar rechts waneer knop 6 word ingedrukt
             self.wheels.goRight()
+        elif msg.buttons[7]:  # stopt met knop 7
+            self.wheels.stop()
 
 
 # class om de motors aan te sturen
