@@ -72,6 +72,31 @@ class Sensor(Node):
         elif command == 'distancemin10':
             max_distance -= 10
 
+class Joy(Node):
+    def __init__(self):
+        super().__init__('_Joy_')
+        self.subscription = self.create_subscription(
+            Joy,
+            'joy',
+            self.listener_callback_Joy,
+            5)
+
+    def _joy_callback(self, msg):
+        if abs(msg.axes[0]) > 0.10:
+            self.spin = msg.axes[0]
+        else:
+            self.spin = 0.0
+
+            if abs(msg.axes[1] > 0.10):
+                self.speed = msg.axes[1]
+            else:
+                self.speed = 0.0
+
+                if msg.button[5] == 1:
+                    self.speed = 0
+                    self.spin = 0
+
+                    self._set_motor_speeds()
 
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
@@ -110,32 +135,6 @@ class Motor:
         else:
             self._pwmFwd.ChangeDutyCycle(speed)
             self._pwmBack.ChangeDutyCycle(0)
-
-class Joy(Node):
-    def __init__(self):
-        super().__init__('_Joy_')
-        self.subscription = self.create_subscription(
-            Joy,
-            'joy',
-            self.listener_callback_Joy,
-            5)
-
-        def _joy_callback(self, msg):
-            if abs(msg.axes[0]) > 0.10:
-                self.spin = msg.axes[0]
-            else:
-                self.spin = 0.0
-
-                if abs(msg.axes[1] > 0.10):
-                    self.speed = msg.axes[1]
-                else:
-                    self.speed = 0.0
-
-                    if msg.button[5] == 1:
-                        self.speed = 0
-                        self.spin = 0
-
-                        self._set_motor_speeds()
 
 # class om de wielen aan te sturen
 class Wheels:
@@ -193,7 +192,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wheels())
+    rclpy.spin(Joy())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
