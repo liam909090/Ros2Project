@@ -78,7 +78,7 @@ class Joy(Node):
         self.subscription = self.create_subscription(
             Joy,
             'joy',
-            self.listener_callback_Joy,
+            self.listener_callback_joy,
             5)
 
     def _joy_callback(self, msg):
