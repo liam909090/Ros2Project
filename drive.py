@@ -194,13 +194,12 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Joystick())
+    rclpy.spin(Wielen())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
     Sensor().distance() == 10
     Sensor().destroy_node()
-    Joystick().destroy_Node()
     GPIO.cleanup()
     rclpy.shutdown()
 
