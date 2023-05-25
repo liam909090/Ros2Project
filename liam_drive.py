@@ -61,24 +61,25 @@ class Wielen(Node):
     def _joy_callback(self, msg):
         # to-do: uitzoeken welke knop wat is
 
-        if msg.buttons[3]:  # snelheid gaat naar beneden met knop 3
+        if msg.buttons[1] == 1:  # snelheid gaat naar beneden met knop 1
             self.wheels.speed_int = -10
-        elif msg.buttons[4]:  # snelheid gaat omhoog met knop 4
+        elif msg.buttons[2] == 1:  # snelheid gaat omhoog met knop 2
             self.wheels.speed_int = +10
-        elif msg.buttons[5] == 1:  # gaat naar voren als knop 5 word ingedrukt
+        elif msg.buttons[3] == 1:  # gaat naar voren als knop 3 word ingedrukt
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
                     self.wheels.goForward()
                 else:
                     self.wheels.stop()
-        elif msg.buttons[6]:  # gaat naar achter waneer knop 6 word ingedrukt
+        elif msg.buttons[4] == 1:  # gaat naar achter waneer knop 4 word ingedrukt
             self.wheels.goBackward()
-        elif msg.buttons[7]:  # gaat naar links waneer knop 7 word ingedrukt
+        elif msg.buttons[5] == 1:  # gaat naar links waneer knop 5 word ingedrukt
             self.wheels.goLeft()
-        elif msg.buttons[8]:  # gaat naar rechts waneer knop 8 word ingedrukt
+        elif msg.buttons[6] == 1:  # gaat naar rechts waneer knop 6 word ingedrukt
             self.wheels.goRight()
 
 
+# class om de motors aan te sturen
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
         #  Stelt de GPIO in
@@ -118,9 +119,9 @@ class Motor:
             self._pwmBack.ChangeDutyCycle(0)
 
 
-# class om de wielen aan te sturen
+# class om de wielen te laten rijden
 class Wheels:
-    speed_int = 40
+    speed_int = 40  # variable om de snelheid makkelijk aan te passen
 
     def __init__(self):
         self.rightWheel = Motor(10, 9)
@@ -178,7 +179,6 @@ def distance():
 def main(args=None):
     rclpy.init(args=args)
     rclpy.spin(Wielen())
-
     Wielen().wheels.stop()
     Wielen().destroy_node()
     GPIO.cleanup()
