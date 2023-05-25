@@ -87,16 +87,16 @@ class Joy(Node):
         else:
             self.spin = 0.0
 
-            if abs(msg.axes[1] > 0.10):
-                self.speed = msg.axes[1]
-            else:
-                self.speed = 0.0
+        if abs(msg.axes[1] > 0.10):
+            self.speed = msg.axes[1]
+        else:
+            self.speed = 0.0
 
-                if msg.button[5] == 1:
-                    self.speed = 0
-                    self.spin = 0
+        if msg.button[5] == 1:
+            self.speed = 0
+            self.spin = 0
 
-                    self._set_motor_speeds()
+            self._set_motor_speeds()
 
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
@@ -192,7 +192,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Joy())
+    rclpy.spin(Joy)
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
