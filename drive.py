@@ -7,7 +7,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 import RPi.GPIO as GPIO
 from geometry_msgs.msg import Twist, Vector3
-from sensor_msgs.msg import Joy, Range
 
 pinTrigger = 17
 pinEcho = 18
