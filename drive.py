@@ -75,27 +75,31 @@ class Sensor(Node):
             max_distance -= 10
 
     
-    
-        self._joy_subscription = self.create_subscription(
-            Joy,
-            'joy',
-            self._joy_callback,
-            5)
+class Joystick(Node):
+    def __init__(self):
+        self.subscription = self.create_subscription(
+        Joy,
+        'joy',
+        self._joy_callback,
+        5)
 
     def _joy_callback(self, msg):
         if abs(msg.axes[0]) > 0.10:
             self.spin = msg.axes[0]
+            print(msg.axes[0])
         else:
             self.spin = 0.0
 
         if abs(msg.axes[1] > 0.10):
             self.speed = msg.axes[1]
+            print(msg.axes[1])
         else:
             self.speed = 0.0
 
         if msg.button[5] == 1:
             self.speed = 0
             self.spin = 0
+            print("Stopping")
 
             self._set_motor_speeds()
 
