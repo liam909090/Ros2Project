@@ -193,7 +193,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Joy())
+    rclpy.spin(Wheels())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
