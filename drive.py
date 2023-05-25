@@ -7,6 +7,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 import RPi.GPIO as GPIO
 from geometry_msgs.msg import Twist, Vector3
+from sensor_msgs.msg import Joy, Range
 
 pinTrigger = 17
 pinEcho = 18
@@ -196,13 +197,13 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Joy())
+    rclpy.spin(Joystick())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
     Sensor().distance() == 10
     Sensor().destroy_node()
-    Joy().destroy_Node()
+    Joystick().destroy_Node()
     GPIO.cleanup()
     rclpy.shutdown()
 
