@@ -25,6 +25,7 @@ GPIO.setup(PinLight, GPIO.IN)
 class Wielen(Node):
     def __init__(self):
         super().__init__("_Wielen_")
+
         self.subscription = self.create_subscription(
             String, "Rijden", self.listener_callback_Wielen, 10
         )
@@ -72,21 +73,6 @@ class Sensor(Node):
         elif command == "distancemin10":
             max_distance -= 10
 
-
-class Motor:
-    def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
-        #  Stelt de GPIO in
-        GPIO.setup(pinFwd, GPIO.OUT)
-        GPIO.setup(pinBack, GPIO.OUT)
-
-        #  Get a handle to PWM
-        self._frequency = frequency
-        self._maxSpeed = maxSpeed
-        self._pwmFwd = GPIO.PWM(pinFwd, frequency)
-        self._pwmBack = GPIO.PWM(pinBack, frequency)
-        self._pwmFwd.start(0)
-        self._pwmBack.start(0)
-
     def _joy_callback(self, msg):
         """Translate XBox buttons into speed and spin
 
@@ -110,7 +96,22 @@ class Motor:
             self.speed = 0
             self.spin = 0
 
-        self._set_motor_speeds()
+        Motor._set_motor_speeds()
+
+
+class Motor:
+    def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
+        #  Stelt de GPIO in
+        GPIO.setup(pinFwd, GPIO.OUT)
+        GPIO.setup(pinBack, GPIO.OUT)
+
+        #  Get a handle to PWM
+        self._frequency = frequency
+        self._maxSpeed = maxSpeed
+        self._pwmFwd = GPIO.PWM(pinFwd, frequency)
+        self._pwmBack = GPIO.PWM(pinBack, frequency)
+        self._pwmFwd.start(0)
+        self._pwmBack.start(0)
 
     def forwards(self, speed):
         self.move(speed)
