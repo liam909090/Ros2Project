@@ -136,6 +136,7 @@ class Joy(Node):
                         self.spin = 0
 
                         self._set_motor_speeds()
+
 # class om de wielen aan te sturen
 class Wheels:
     def __init__(self):
@@ -192,7 +193,7 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wielen, Sensor)
+    rclpy.spin(Joy())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
