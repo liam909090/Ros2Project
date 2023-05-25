@@ -10,6 +10,17 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy, Range
 
+pinTrigger = 17
+pinEcho = 18
+PinLight = 25
+max_distance = 10
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(pinTrigger, GPIO.OUT)
+GPIO.setup(pinEcho, GPIO.IN)
+GPIO.setup(PinLight, GPIO.IN)
+
 
 class Wheelie(Node):
     """Wheelie node suitable for a RPi robot with two PWM driven motors
