@@ -51,31 +51,6 @@ class Wielen(Node):
         elif command == "right":
             self.wheels.goRight()
 
-    def _joy_callback(self, msg):
-        """Translate XBox buttons into speed and spin
-
-        Just use the left joystick (for now):
-        LSB left/right  axes[0]     +1 (left) to -1 (right)
-        LSB up/down     axes[1]     +1 (up) to -1 (back)
-        LB              buttons[5]  1 pressed, 0 otherwise
-        """
-
-        if abs(msg.axes[0]) > 0.10:
-            self.spin = msg.axes[0]
-        else:
-            self.spin = 0.0
-
-        if abs(msg.axes[1]) > 0.10:
-            self.speed = msg.axes[1]
-        else:
-            self.speed = 0.0
-
-        if msg.buttons[5] == 1:
-            self.speed = 0
-            self.spin = 0
-
-        self._set_motor_speeds()
-
 
 # node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
 class Sensor(Node):
@@ -112,6 +87,31 @@ class Motor:
         self._pwmFwd.start(0)
         self._pwmBack.start(0)
 
+    def _joy_callback(self, msg):
+        """Translate XBox buttons into speed and spin
+
+        Just use the left joystick (for now):
+        LSB left/right  axes[0]     +1 (left) to -1 (right)
+        LSB up/down     axes[1]     +1 (up) to -1 (back)
+        LB              buttons[5]  1 pressed, 0 otherwise
+        """
+
+        if abs(msg.axes[0]) > 0.10:
+            self.spin = msg.axes[0]
+        else:
+            self.spin = 0.0
+
+        if abs(msg.axes[1]) > 0.10:
+            self.speed = msg.axes[1]
+        else:
+            self.speed = 0.0
+
+        if msg.buttons[5] == 1:
+            self.speed = 0
+            self.spin = 0
+
+        self._set_motor_speeds()
+
     def forwards(self, speed):
         self.move(speed)
 
@@ -135,6 +135,52 @@ class Motor:
         else:
             self._pwmFwd.ChangeDutyCycle(speed)
             self._pwmBack.ChangeDutyCycle(0)
+
+    def _set_motor_speeds(self):
+        # TODO: inject a stop() if no speeds seen for a while
+        #
+        # Scary math ahead.
+        #
+        # First figure out the speed of each wheel based on spin: each wheel
+        # covers self._wheel_base meters in one radian, so the target speed
+        # for each wheel in meters per sec is spin (radians/sec) times
+        # wheel_base divided by wheel_diameter
+        #
+        right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
+        left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
+        #
+        # Now add in forward motion.
+        #
+        left_mps = self.speed + left_twist_mps
+        right_mps = self.speed + right_twist_mps
+        #
+        # Convert meters/sec into RPM: for each revolution, a wheel travels
+        # pi * diameter meters, and each minute has 60 seconds.
+        #
+        left_target_rpm = (left_mps * 60.0) / (math.pi * self._wheel_diameter)
+        right_target_rpm = (right_mps * 60.0) / (math.pi * self._wheel_diameter)
+        #
+        left_percentage = (left_target_rpm / self._left_max_rpm) * 100.0
+        right_percentage = (right_target_rpm / self._right_max_rpm) * 100.0
+        #
+        # clip to +- 100%
+        left_percentage = max(min(left_percentage, 100.0), -100.0)
+        right_percentage = max(min(right_percentage, 100.0), -100.0)
+        #
+        # Add in a governor to cap forward motion when we're about
+        # to collide with something (but still backwards motion)
+        governor = 1.0
+        if self.distance < self.tooclose:
+            governor = 0.0
+        elif self.distance < self.close:
+            governor = (self.distance - self.tooclose) / (self.close - self.tooclose)
+        if right_percentage > 0:
+            right_percentage *= governor
+        if left_percentage > 0:
+            left_percentage *= governor
+        #
+        self._rightWheel.run(right_percentage)
+        self._leftWheel.run(left_percentage)
 
 
 # class om de wielen aan te sturen
