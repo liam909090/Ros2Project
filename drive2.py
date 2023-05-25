@@ -1,25 +1,14 @@
 #! /usr/bin/env python3
 
+from motor import Motor
 import math
 
 # ROS 2
 import rclpy
-import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy, Range
-
-pinTrigger = 17
-pinEcho = 18
-PinLight = 25
-max_distance = 10
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(pinTrigger, GPIO.OUT)
-GPIO.setup(pinEcho, GPIO.IN)
-GPIO.setup(PinLight, GPIO.IN)
 
 
 class Wheelie(Node):
@@ -167,45 +156,6 @@ class Wheelie(Node):
         else:
             print("Unknown command, stopping instead")
             self.stop()
-
-
-class Motor:
-    def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
-        #  Stelt de GPIO in
-        GPIO.setup(pinFwd, GPIO.OUT)
-        GPIO.setup(pinBack, GPIO.OUT)
-
-        #  Get a handle to PWM
-        self._frequency = frequency
-        self._maxSpeed = maxSpeed
-        self._pwmFwd = GPIO.PWM(pinFwd, frequency)
-        self._pwmBack = GPIO.PWM(pinBack, frequency)
-        self._pwmFwd.start(0)
-        self._pwmBack.start(0)
-
-    def forwards(self, speed):
-        self.move(speed)
-
-    def backwards(self, speed):
-        self.move(-speed)
-
-    def stop(self):
-        self.move(0)
-
-    def move(self, speed):
-        #  Zet snelheids limit in
-        if speed > self._maxSpeed:
-            speed = self._maxSpeed
-        if speed < -self._maxSpeed:
-            speed = -self._maxSpeed
-
-        #  doet de moters aan
-        if speed < 0:
-            self._pwmFwd.ChangeDutyCycle(0)
-            self._pwmBack.ChangeDutyCycle(-speed)
-        else:
-            self._pwmFwd.ChangeDutyCycle(speed)
-            self._pwmBack.ChangeDutyCycle(0)
 
     def _joy_callback(self, msg):
         """Translate XBox buttons into speed and spin

@@ -5,6 +5,7 @@ import time
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
+from sensor_msgs.msg import Joy
 import RPi.GPIO as GPIO
 
 pinTrigger = 17
@@ -26,7 +27,11 @@ class Wielen(Node):
         self.subscription = self.create_subscription(
             String, "Rijden", self.listener_callback_Wielen, 10
         )
-        self.wheels = Wheels()  # Moet dit iets anders worden?
+        self.wheels = Wheels()
+
+        self._joy_subscription = self.create_subscription(
+            Joy, "joy", self._joy_callback, 5
+        )
 
     # luisterd naar commands en onderneemd acties op basis van het command
     def listener_callback_Wielen(self, msg):
@@ -44,20 +49,7 @@ class Wielen(Node):
             self.wheels.stop()
         elif command == "right":
             self.wheels.goRight()
-
-
-# node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
-class Sensor(Node):
-    def __init__(self):
-        super().__init__("_sensor_")
-        self.subscription = self.create_subscription(
-            String, "SensorAfstand", self.listener_callback_sensor, 10
-        )
-
-    # luisterd naar commands en onderneemd acties op basis van het command
-    def listener_callback_sensor(self, msg):
-        command = msg.data
-        if command == "distance1":
+        elif command == "distance1":
             max_distance += 1
         elif command == "distancemin1":
             max_distance -= 1
@@ -65,6 +57,26 @@ class Sensor(Node):
             max_distance += 10
         elif command == "distancemin10":
             max_distance -= 10
+
+    def _joy_callback(self, msg):
+        # to-do: uitzoeken welke knop wat is
+
+        if msg.buttons[3]:  # snelheid gaat naar beneden met knop 3
+            self.wheels.speed_int = -10
+        elif msg.buttons[4]:  # snelheid gaat omhoog met knop 4
+            self.wheels.speed_int = +10
+        elif msg.buttons[5] == 1:  # gaat naar voren als knop 5 word ingedrukt
+            if GPIO.input(PinLight) == 1:
+                if distance() > max_distance:
+                    self.wheels.goForward()
+                else:
+                    self.wheels.stop()
+        elif msg.buttons[6]:  # gaat naar achter waneer knop 6 word ingedrukt
+            self.wheels.goBackward()
+        elif msg.buttons[7]:  # gaat naar links waneer knop 7 word ingedrukt
+            self.wheels.goLeft()
+        elif msg.buttons[8]:  # gaat naar rechts waneer knop 8 word ingedrukt
+            self.wheels.goRight()
 
 
 class Motor:
@@ -108,6 +120,8 @@ class Motor:
 
 # class om de wielen aan te sturen
 class Wheels:
+    speed_int = 40
+
     def __init__(self):
         self.rightWheel = Motor(10, 9)
         self.leftWheel = Motor(8, 7)
@@ -116,19 +130,19 @@ class Wheels:
         self.leftWheel.stop()
         self.rightWheel.stop()
 
-    def goForward(self, speed=40):
+    def goForward(self, speed=speed_int):
         self.rightWheel.forwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goBackward(self, speed=40):
+    def goBackward(self, speed=speed_int):
         self.rightWheel.backwards(speed)
         self.leftWheel.backwards(speed)
 
-    def goRight(self, speed=40):
+    def goRight(self, speed=speed_int):
         self.rightWheel.backwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goLeft(self, speed=40):
+    def goLeft(self, speed=speed_int):
         self.rightWheel.forwards(speed)
         self.leftWheel.backwards(speed)
 
@@ -163,12 +177,10 @@ def distance():
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wielen, Sensor)
+    rclpy.spin(Wielen())
 
     Wielen().wheels.stop()
     Wielen().destroy_node()
-    Sensor().distance() == 10
-    Sensor().destroy_node()
     GPIO.cleanup()
     rclpy.shutdown()
 
