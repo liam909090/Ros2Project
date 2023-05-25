@@ -4,6 +4,7 @@ import math
 
 # ROS 2
 import rclpy
+import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
