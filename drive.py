@@ -6,6 +6,8 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 import RPi.GPIO as GPIO
+from geometry_msgs.msg import Twist, Vector3
+from sensor_msgs.msg import Joy, Range
 
 pinTrigger = 17
 pinEcho = 18
@@ -72,13 +74,12 @@ class Sensor(Node):
         elif command == 'distancemin10':
             max_distance -= 10
 
-class Joy(Node):
-    def __init__(self):
-        super().__init__('_Joy_')
-        self.subscription = self.create_subscription(
+    
+    
+        self._joy_subscription = self.create_subscription(
             Joy,
             'joy',
-            self.listener_callback_joy,
+            self._joy_callback,
             5)
 
     def _joy_callback(self, msg):
