@@ -77,7 +77,7 @@ class Sensor(Node):
     
 class Joystick(Node):
     def __init__(self):
-        self.subscription = self.create_subscription(
+        self._joy_subscription = self.create_subscription(
         Joy,
         'joy',
         self._joy_callback,
