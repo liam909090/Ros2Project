@@ -69,11 +69,11 @@ class Wielen(Node):
         # Knop 6 = L2
         # Knop 7 = R2
         if msg.buttons[1] == 1:  # snelheid naar beneden
-            self.wheels.speed_int = -10
+            self.wheels.speed_int -= 10
             print("snelheid omlaag")
             print(self.wheels.speed_int)
         elif msg.buttons[2] == 1:  # snelheid omhoog
-            self.wheels.speed_int = +10
+            self.wheels.speed_int += 10
             print("snelheid omhoog")
             print(self.wheels.speed_int)
         elif msg.buttons[4] == 1:  # naar voren
