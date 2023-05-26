@@ -90,7 +90,7 @@ class Wielen(Node):
         elif msg.buttons[7] == 1:  # naar rechts
             self.wheels.goRight(speed_int)
         elif msg.buttons[0]:  # stoppen
-            self.wheels.stop(speed_int)
+            self.wheels.stop()
 
 
 # class om de motors aan te sturen
