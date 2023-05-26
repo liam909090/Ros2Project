@@ -40,15 +40,15 @@ class Wielen(Node):
         if command == "forward":
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward()
+                    self.wheels.goForward(self, wheels.speed_int)
                 else:
-                    self.wheels.goRight()
+                    self.wheels.goRight(self, wheels.speed_int)
         elif command == "backwards":
-            self.wheels.goBackward()
+            self.wheels.goBackward(self, wheels.speed_int)
         elif command == "stop":
             self.wheels.stop()
         elif command == "right":
-            self.wheels.goRight()
+            self.wheels.goRight(self, wheels.speed_int)
         elif command == "distance1":
             max_distance += 1
         elif command == "distancemin1":
@@ -145,20 +145,20 @@ class Wheels:
         self.rightWheel.stop()
 
     def goForward(self, speed):
-        self.rightWheel.forwards(Wheels.speed_int)
-        self.leftWheel.forwards(Wheels.speed_int)
+        self.rightWheel.forwards(speed)
+        self.leftWheel.forwards(speed)
 
     def goBackward(self, speed):
-        self.rightWheel.backwards(Wheels.speed_int)
-        self.leftWheel.backwards(Wheels.speed_int)
+        self.rightWheel.backwards(speed)
+        self.leftWheel.backwards(speed)
 
     def goRight(self, speed):
-        self.rightWheel.backwards(Wheels.speed_int)
-        self.leftWheel.forwards(Wheels.speed_int)
+        self.rightWheel.backwards(speed)
+        self.leftWheel.forwards(speed)
 
     def goLeft(self, speed):
-        self.rightWheel.forwards(Wheels.speed_int)
-        self.leftWheel.backwards(Wheels.speed_int)
+        self.rightWheel.forwards(speed)
+        self.leftWheel.backwards(speed)
 
 
 def distance():
