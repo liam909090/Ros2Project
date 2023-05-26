@@ -144,21 +144,21 @@ class Wheels:
         self.leftWheel.stop()
         self.rightWheel.stop()
 
-    def goForward(self, speed=speed_int):
-        self.rightWheel.forwards(speed)
-        self.leftWheel.forwards(speed)
+    def goForward(self, speed_int):
+        self.rightWheel.forwards(speed_int)
+        self.leftWheel.forwards(speed_int)
 
-    def goBackward(self, speed=speed_int):
-        self.rightWheel.backwards(speed)
-        self.leftWheel.backwards(speed)
+    def goBackward(self, speed_int):
+        self.rightWheel.backwards(speed_int)
+        self.leftWheel.backwards(speed_int)
 
-    def goRight(self, speed=speed_int):
-        self.rightWheel.backwards(speed)
-        self.leftWheel.forwards(speed)
+    def goRight(self, speed_int):
+        self.rightWheel.backwards(speed_int)
+        self.leftWheel.forwards(speed_int)
 
-    def goLeft(self, speed=speed_int):
-        self.rightWheel.forwards(speed)
-        self.leftWheel.backwards(speed)
+    def goLeft(self, speed_int):
+        self.rightWheel.forwards(speed_int)
+        self.leftWheel.backwards(speed_int)
 
 
 def distance():
