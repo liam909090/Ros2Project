@@ -61,23 +61,27 @@ class Wielen(Node):
     def _joy_callback(self, msg):
         # to-do: uitzoeken welke knop wat is
 
-        if msg.buttons[1] == 1:  # snelheid gaat naar beneden met knop 1
+        if msg.buttons[1] == 1:  # snelheid gaat naar beneden met knop 1 (x)
             self.wheels.speed_int = -10
-        elif msg.buttons[2] == 1:  # snelheid gaat omhoog met knop 2
+            print("snelheid omlaag")
+        elif msg.buttons[2] == 1:  # snelheid gaat omhoog met knop 2 (0)
             self.wheels.speed_int = +10
-        elif msg.buttons[3] == 1:  # gaat naar voren als knop 3 word ingedrukt
+            print("snelheid omhoog")
+        elif (
+            msg.buttons[3] == 1
+        ):  # gaat naar voren als knop 3 word ingedrukt (driehoek)
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
                     self.wheels.goForward()
                 else:
                     self.wheels.stop()
-        elif msg.buttons[4] == 1:  # gaat naar achter waneer knop 4 word ingedrukt
+        elif msg.buttons[4] == 1:  # gaat naar achter waneer knop 4 word ingedrukt(L1)
             self.wheels.goBackward()
-        elif msg.buttons[5] == 1:  # gaat naar links waneer knop 5 word ingedrukt
+        elif msg.buttons[5] == 1:  # gaat naar links waneer knop 5 word ingedrukt(R1)
             self.wheels.goLeft()
-        elif msg.buttons[6] == 1:  # gaat naar rechts waneer knop 6 word ingedrukt
+        elif msg.buttons[6] == 1:  # gaat naar rechts waneer knop 6 word ingedrukt(L2)
             self.wheels.goRight()
-        elif msg.buttons[7]:  # stopt met knop 7
+        elif msg.buttons[7]:  # stopt met knop 7(R2)
             self.wheels.stop()
 
 
