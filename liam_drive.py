@@ -12,6 +12,7 @@ pinTrigger = 17
 pinEcho = 18
 PinLight = 25
 max_distance = 10
+speed_int = 40  # variable om de snelheid makkelijk aan te passen
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -40,15 +41,15 @@ class Wielen(Node):
         if command == "forward":
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward(self, wheels.speed_int)
+                    self.wheels.goForward(self, speed_int)
                 else:
-                    self.wheels.goRight(self, wheels.speed_int)
+                    self.wheels.goRight(self, speed_int)
         elif command == "backwards":
-            self.wheels.goBackward(self, wheels.speed_int)
+            self.wheels.goBackward(self, speed_int)
         elif command == "stop":
             self.wheels.stop()
         elif command == "right":
-            self.wheels.goRight(self, wheels.speed_int)
+            self.wheels.goRight(self, speed_int)
         elif command == "distance1":
             max_distance += 1
         elif command == "distancemin1":
@@ -68,15 +69,14 @@ class Wielen(Node):
         # Knop 5 = R1
         # Knop 6 = L2
         # Knop 7 = R2
-        speed_int = Wheels.speed_int
         if msg.buttons[1] == 1:  # snelheid naar beneden
-            self.wheels.speed_int -= 10
+            self.speed_int -= 10
             print("snelheid omlaag")
-            print(self.wheels.speed_int)
+            print(self.speed_int)
         elif msg.buttons[2] == 1:  # snelheid omhoog
-            self.wheels.speed_int += 10
+            self.speed_int += 10
             print("snelheid omhoog")
-            print(self.wheels.speed_int)
+            print(self.speed_int)
         elif msg.buttons[4] == 1:  # naar voren
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
@@ -136,8 +136,6 @@ class Motor:
 
 # class om de wielen te laten rijden
 class Wheels:
-    speed_int = 40  # variable om de snelheid makkelijk aan te passen
-
     def __init__(self):
         self.rightWheel = Motor(10, 9)
         self.leftWheel = Motor(8, 7)
