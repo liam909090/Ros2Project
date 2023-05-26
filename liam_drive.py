@@ -79,17 +79,17 @@ class Wielen(Node):
         elif msg.buttons[4] == 1:  # naar voren
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward()
+                    self.wheels.goForward(self, Wheels.speed_int)
                 else:
                     self.wheels.stop()
         elif msg.buttons[5] == 1:  # naar achter
-            self.wheels.goBackward()
+            self.wheels.goBackward(self, Wheels.speed_int)
         elif msg.buttons[6] == 1:  # naar links
-            self.wheels.goLeft()
+            self.wheels.goLeft(self, Wheels.speed_int)
         elif msg.buttons[7] == 1:  # naar rechts
-            self.wheels.goRight()
+            self.wheels.goRight(self, Wheels.speed_int)
         elif msg.buttons[0]:  # stoppen
-            self.wheels.stop()
+            self.wheels.stop(self, Wheels.speed_int)
 
 
 # class om de motors aan te sturen
