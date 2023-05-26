@@ -82,7 +82,7 @@ class Wielen(Node):
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
                     self.wheels.goForward(Wielen.speed_int)
-                    print(Wielen.speed_int)
+                    print(max_distance)
                 else:
                     self.wheels.stop()
         elif msg.buttons[5] == 1:  # naar achter
