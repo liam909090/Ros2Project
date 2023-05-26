@@ -12,7 +12,6 @@ pinTrigger = 17
 pinEcho = 18
 PinLight = 25
 max_distance = 10
-speed_int = 40  # variable om de snelheid makkelijk aan te passen
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -23,6 +22,8 @@ GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
 class Wielen(Node):
+    speed_int = 40  # variable om de snelheid makkelijk aan te passen
+
     def __init__(self):
         super().__init__("_Wielen_")
         self.subscription = self.create_subscription(
@@ -41,15 +42,15 @@ class Wielen(Node):
         if command == "forward":
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward(self, speed_int)
+                    self.wheels.goForward(self, Wielen.speed_int)
                 else:
-                    self.wheels.goRight(self, speed_int)
+                    self.wheels.goRight(self, Wielen.speed_int)
         elif command == "backwards":
-            self.wheels.goBackward(self, speed_int)
+            self.wheels.goBackward(self, Wielen.speed_int)
         elif command == "stop":
             self.wheels.stop()
         elif command == "right":
-            self.wheels.goRight(self, speed_int)
+            self.wheels.goRight(self, Wielen.speed_int)
         elif command == "distance1":
             max_distance += 1
         elif command == "distancemin1":
@@ -80,16 +81,16 @@ class Wielen(Node):
         elif msg.buttons[4] == 1:  # naar voren
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward(speed_int)
-                    print(speed_int)
+                    self.wheels.goForward(Wielen.speed_int)
+                    print(Wielen.speed_int)
                 else:
                     self.wheels.stop()
         elif msg.buttons[5] == 1:  # naar achter
-            self.wheels.goBackward(speed_int)
+            self.wheels.goBackward(Wielen.speed_int)
         elif msg.buttons[6] == 1:  # naar links
-            self.wheels.goLeft(speed_int)
+            self.wheels.goLeft(Wielen.speed_int)
         elif msg.buttons[7] == 1:  # naar rechts
-            self.wheels.goRight(speed_int)
+            self.wheels.goRight(Wielen.speed_int)
         elif msg.buttons[0]:  # stoppen
             self.wheels.stop()
 
