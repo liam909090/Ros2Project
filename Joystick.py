@@ -7,10 +7,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 import RPi.GPIO as GPIO
-from pyjoystick.sdl2 import Key, Joystick, run_event_loop
-
-
-
 
 
 pinTrigger = 17
@@ -100,33 +96,17 @@ class Wielen(Node):
             self.wheels.goRight(Wielen.speed_int)
         elif msg.buttons[0]:  # stoppen
             self.wheels.stop()
-
-        def print_add(Joy):
-            print('added', Joy)
-
-        def print_remove(Joy):
-            print('removed', Joy)
-
-        def key_received(key):
-            print('recieved', key)
-            if key.value == Key.HAT_UP:
-                self.wheels.goForward(Wielen.speed_int)
-            elif key.value == Key.HAT_DOWN:
-                self.wheels.goBackward(Wielen.speed_int)
-            if key.value == Key.HAT_LEFT:
-                self.wheels.goLeft(Wielen.speed_int)
-            elif key.value == Key.HAT_UPLEFT:
-                self.wheels.goUpLeft(Wielen.speed_int)
-            elif key.value == Key.HAT_DOWNLEFT:
-                self.wheels.goDownLeft(Wielen.speed_int)
-            elif key.value == Key.HAT_RIGHT:
-                self.wheels.goRight(Wielen.speed_int)
-            elif key.value == Key.HAT_UPRIGHT:
-                self.wheels.goUpRight(Wielen.speed_int)
-            elif key.value == Key.HAT_DOWNRIGHT:
-                self.wheels.goDownRight(Wielen.speed_int)
         
-                run_event_loop(print_add, print_remove, key_received)
+        if abs(msg.axes[0]) > 0.10:
+            self.spin = (msg.axes[0])*100
+        else:
+            self.spin = 0
+
+        if abs(msg.axes[1]) > 0.10:
+            self.speed = (msg.axes[1])*100
+        else:
+            self.speed = 0
+
 
 
 # class om de motors aan te sturen
@@ -210,6 +190,12 @@ class Wheels:
     def goDownRight(self, speed):
         self.rightWheel.backwards(speed/2)
         self.leftWheel.backwards(speed)
+
+    def _cmd_vel_callback(self, msg):
+        self.speed = msg.linear.x
+        self.spin = msg.angular.z
+        self._set_motor_speeds()
+
 
 
 def distance():
