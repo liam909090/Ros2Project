@@ -7,7 +7,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 import RPi.GPIO as GPIO
-import pyjoystick
 from pyjoystick.sdl2 import Key, Joystick, run_event_loop
 
 
