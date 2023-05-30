@@ -98,12 +98,12 @@ class Wielen(Node):
             self.wheels.stop()
         
         if abs(msg.axes[0]) > 0.10:
-            self.spin = (msg.axes[0])*100
+            self.spin = (msg.axes[0])*Wielen.speed_int
         else:
             self.spin = 0
 
         if abs(msg.axes[1]) > 0.10:
-            self.speed = (msg.axes[1])*100
+            self.speed = (msg.axes[1])*Wielen.speed_int
         else:
             self.speed = 0
 
