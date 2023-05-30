@@ -10,9 +10,6 @@ import RPi.GPIO as GPIO
 from pyjoystick.sdl2 import Key, Joystick, run_event_loop
 
 
-
-
-
 pinTrigger = 17
 pinEcho = 18
 PinLight = 25
@@ -100,15 +97,19 @@ class Wielen(Node):
             self.wheels.goRight(Wielen.speed_int)
         elif msg.buttons[0]:  # stoppen
             self.wheels.stop()
+        elif abs(msg.axes[1] > 0.10):
+            self.wheels.goForward(10)
+        elif abs(msg.axes[1] > 0.20):
+            self.wheels.goForward(10)
 
         def print_add(Joy):
-            print('added', Joy)
+            print("added", Joy)
 
         def print_remove(Joy):
-            print('removed', Joy)
+            print("removed", Joy)
 
         def key_received(key):
-            print('recieved', key)
+            print("recieved", key)
             if key.value == Key.HAT_UP:
                 self.wheels.goForward(Wielen.speed_int)
             elif key.value == Key.HAT_DOWN:
@@ -125,7 +126,7 @@ class Wielen(Node):
                 self.wheels.goUpRight(Wielen.speed_int)
             elif key.value == Key.HAT_DOWNRIGHT:
                 self.wheels.goDownRight(Wielen.speed_int)
-        
+
                 run_event_loop(print_add, print_remove, key_received)
 
 
@@ -197,18 +198,18 @@ class Wheels:
 
     def goUpLeft(self, speed):
         self.rightWheel.forwards(speed)
-        self.leftWheel.forwards(speed/2)
+        self.leftWheel.forwards(speed / 2)
 
     def goDownLeft(self, speed):
         self.rightWheel.backwards(speed)
-        self.leftWheel.backwards(speed/2)
+        self.leftWheel.backwards(speed / 2)
 
     def goUpRight(self, speed):
-        self.rightWheel.forwards(speed/2)
+        self.rightWheel.forwards(speed / 2)
         self.leftWheel.forwards(speed)
 
     def goDownRight(self, speed):
-        self.rightWheel.backwards(speed/2)
+        self.rightWheel.backwards(speed / 2)
         self.leftWheel.backwards(speed)
 
 

@@ -3,10 +3,10 @@
 # impoteerd modules
 import time
 import rclpy
+import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
-import RPi.GPIO as GPIO
 
 pinTrigger = 17
 pinEcho = 18
@@ -95,6 +95,9 @@ class Wielen(Node):
             self.wheels.goRight(Wielen.speed_int)
         elif msg.buttons[0]:  # stoppen
             self.wheels.stop()
+        elif abs(msg.axes[1] > 0.10):
+            speed = msg.axes[1] * 100
+            self.wheels.goForward(speed)
 
 
 # class om de motors aan te sturen
