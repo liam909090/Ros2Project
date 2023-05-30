@@ -98,6 +98,8 @@ class Wielen(Node):
         elif abs(msg.axes[1] > 0.10):
             speed = msg.axes[1] * 100
             self.wheels.goForward(speed)
+        elif abs(msg.axes[1] < 0.10):
+            self.wheels.stop()
 
 
 # class om de motors aan te sturen
