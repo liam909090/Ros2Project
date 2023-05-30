@@ -100,13 +100,13 @@ class Wielen(Node):
             speed = msg.axes[1] * 100
             self.wheels.goForward(speed)
         elif (msg.axes[1] < -0.10):
-            speed = msg.axes[1] * 100
+            speed = msg.axes[1] * -100
             self.wheels.goBackward(speed)
         elif (msg.axes[0] > 0.10):
             speed = msg.axes[0] * 100
             self.wheels.goLeft(speed)
         elif (msg.axes[0] < -0.10):
-            speed = msg.axes[0] * 100
+            speed = msg.axes[0] * -100
             self.wheels.goRight(speed)
         elif abs(msg.axes[0] < 0.10) & abs(msg.axes[1] < 0.10):
             self.wheels.stop()
