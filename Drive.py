@@ -43,36 +43,15 @@ class Wielen(Node):
         # Knop 5 = R1
         # Knop 6 = L2
         # Knop 7 = R2
-        if msg.buttons[1] == 1:  # snelheid naar beneden
-            Wielen.speed_int -= 10
-            print("snelheid omlaag")
-            print(Wielen.speed_int)
-        elif msg.buttons[2] == 1:  # snelheid omhoog
-            Wielen.speed_int += 10
-            print("snelheid omhoog")
-            print(self.speed_int)
-        elif msg.buttons[4] == 1:  # naar voren
-            if GPIO.input(PinLight) == 1:
-                if distance() > max_distance:
-                    while distance() > max_distance:
-                        self.wheels.goForward(Wielen.speed_int)
-                        print(max_distance)
-                    self.wheels.stop()
-                else:
-                    self.wheels.stop()
-        elif msg.buttons[5] == 1:  # naar achter
-            self.wheels.goBackward(Wielen.speed_int)
-        elif msg.buttons[6] == 1:  # naar links
-            self.wheels.goLeft(Wielen.speed_int)
-        elif msg.buttons[7] == 1:  # naar rechts
-            self.wheels.goRight(Wielen.speed_int)
-        elif msg.buttons[0]:  # stoppen
+        if msg.buttons[0]:  # stoppen
             self.wheels.stop()
 
         elif msg.axes[1] > 0.10:
             speed = msg.axes[1] * 100
-            self.wheels.goForward(speed)
-
+            if distance() > max_distance:
+                self.wheels.goForward(speed)
+            else:
+                self.wheels.stop()
         elif msg.axes[1] < -0.10:
             speed = msg.axes[1] * -100
             self.wheels.goBackward(speed)
