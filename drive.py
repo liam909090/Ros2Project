@@ -29,6 +29,7 @@ class Wielen(Node):
         )
 
     def _joy_callback(self, msg):
+        self.wheels = Wheels()
         # to-do: uitzoeken welke knop wat is
         # Knop 0 = vierkant
         # Knop 1 = x
