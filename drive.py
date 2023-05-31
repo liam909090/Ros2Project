@@ -22,9 +22,8 @@ GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
 class Wielen(Node):
-    super().__init__("_Wielen_")
-
     def __init__(self):
+        super().__init__("_Robot_")
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
