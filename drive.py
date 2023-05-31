@@ -23,10 +23,44 @@ GPIO.setup(PinLight, GPIO.IN)
 # zet de node op voor ros2
 class Wielen(Node):
     def __init__(self):
+<<<<<<< HEAD
         super().__init__("_Robot_")
+=======
+        super().__init__("_Wielen_")
+        self.subscription = self.create_subscription(
+            String, "Rijden", self.listener_callback_Wielen, 10
+        )
+        self.wheels = Wheels()
+
+>>>>>>> parent of 8a832e2 (onnodige code verwijderd)
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
+
+    # luisterd naar commands en onderneemd acties op basis van het command
+    def listener_callback_Wielen(self, msg):
+        command = msg.data
+        wheels = Wheels
+        if command == "forward":
+            if GPIO.input(PinLight) == 1:
+                if distance() > max_distance:
+                    self.wheels.goForward(self, Wielen.speed_int)
+                else:
+                    self.wheels.goRight(self, Wielen.speed_int)
+        elif command == "backwards":
+            self.wheels.goBackward(self, Wielen.speed_int)
+        elif command == "stop":
+            self.wheels.stop()
+        elif command == "right":
+            self.wheels.goRight(self, Wielen.speed_int)
+        elif command == "distance1":
+            max_distance += 1
+        elif command == "distancemin1":
+            max_distance -= 1
+        elif command == "distance10":
+            max_distance += 10
+        elif command == "distancemin10":
+            max_distance -= 10
 
     def _joy_callback(self, msg):
         self.wheels = Wheels()
@@ -39,15 +73,36 @@ class Wielen(Node):
         # Knop 5 = R1
         # Knop 6 = L2
         # Knop 7 = R2
-        if msg.buttons[0]:  # stoppen
+        if msg.buttons[1] == 1:  # snelheid naar beneden
+            Wielen.speed_int -= 10
+            print("snelheid omlaag")
+            print(Wielen.speed_int)
+        elif msg.buttons[2] == 1:  # snelheid omhoog
+            Wielen.speed_int += 10
+            print("snelheid omhoog")
+            print(self.speed_int)
+        elif msg.buttons[4] == 1:  # naar voren
+            if GPIO.input(PinLight) == 1:
+                if distance() > max_distance:
+                    while distance() > max_distance:
+                        self.wheels.goForward(Wielen.speed_int)
+                        print(max_distance)
+                    self.wheels.stop()
+                else:
+                    self.wheels.stop()
+        elif msg.buttons[5] == 1:  # naar achter
+            self.wheels.goBackward(Wielen.speed_int)
+        elif msg.buttons[6] == 1:  # naar links
+            self.wheels.goLeft(Wielen.speed_int)
+        elif msg.buttons[7] == 1:  # naar rechts
+            self.wheels.goRight(Wielen.speed_int)
+        elif msg.buttons[0]:  # stoppen
             self.wheels.stop()
 
         elif msg.axes[1] > 0.10:
             speed = msg.axes[1] * 100
-            if distance() > max_distance:
-                self.wheels.goForward(speed)
-            else:
-                self.wheels.stop()
+            self.wheels.goForward(speed)
+
         elif msg.axes[1] < -0.10:
             speed = msg.axes[1] * -100
             self.wheels.goBackward(speed)
