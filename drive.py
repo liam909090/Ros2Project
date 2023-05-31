@@ -3,11 +3,10 @@
 # impoteerd modules
 import time
 import rclpy
+import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
-import RPi.GPIO as GPIO
-from geometry_msgs.msg import Twist, Vector3
-from sensor_msgs.msg import Joy, Range
+from sensor_msgs.msg import Joy
 
 pinTrigger = 17
 pinEcho = 18
@@ -23,13 +22,14 @@ GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
 class Wielen(Node):
+    speed_int = 40  # variable om de snelheid makkelijk aan te passen
+
     def __init__(self):
         super().__init__("_Wielen_")
-
         self.subscription = self.create_subscription(
             String, "Rijden", self.listener_callback_Wielen, 10
         )
-        self.wheels = Wheels()  # Moet dit iets anders worden?
+        self.wheels = Wheels()
 
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
@@ -42,54 +42,16 @@ class Wielen(Node):
         if command == "forward":
             if GPIO.input(PinLight) == 1:
                 if distance() > max_distance:
-                    self.wheels.goForward()
+                    self.wheels.goForward(self, Wielen.speed_int)
                 else:
-                    self.wheels.goRight()
+                    self.wheels.goRight(self, Wielen.speed_int)
         elif command == "backwards":
-            self.wheels.goBackward()
+            self.wheels.goBackward(self, Wielen.speed_int)
         elif command == "stop":
             self.wheels.stop()
         elif command == "right":
-            self.wheels.goRight()
-
-    def _joy_callback(self, msg):
-        """Translate XBox buttons into speed and spin
-
-        Just use the left joystick (for now):
-        LSB left/right  axes[0]     +1 (left) to -1 (right)
-        LSB up/down     axes[1]     +1 (up) to -1 (back)
-        LB              buttons[5]  1 pressed, 0 otherwise
-        """
-
-        if abs(msg.axes[0]) > 0.10:
-            self.spin = msg.axes[0]
-        else:
-            self.spin = 0.0
-
-        if abs(msg.axes[1]) > 0.10:
-            self.speed = msg.axes[1]
-        else:
-            self.speed = 0.0
-
-        if msg.buttons[5] == 1:
-            self.speed = 0
-            self.spin = 0
-
-        # Motor._set_motor_speeds()
-
-
-# node voor de sensor, luisterd of er een commando komt voor het aanpassen van de sensor
-class Sensor(Node):
-    def __init__(self):
-        super().__init__("_sensor_")
-        self.subscription = self.create_subscription(
-            String, "SensorAfstand", self.listener_callback_sensor, 10
-        )
-
-    # luisterd naar commands en onderneemd acties op basis van het command
-    def listener_callback_sensor(self, msg):
-        command = msg.data
-        if command == "distance1":
+            self.wheels.goRight(self, Wielen.speed_int)
+        elif command == "distance1":
             max_distance += 1
         elif command == "distancemin1":
             max_distance -= 1
@@ -98,7 +60,60 @@ class Sensor(Node):
         elif command == "distancemin10":
             max_distance -= 10
 
+    def _joy_callback(self, msg):
+        # to-do: uitzoeken welke knop wat is
+        # Knop 0 = vierkant
+        # Knop 1 = x
+        # Knop 2 = o
+        # Knop 3 = driehoek
+        # Knop 4 = L1
+        # Knop 5 = R1
+        # Knop 6 = L2
+        # Knop 7 = R2
+        if msg.buttons[1] == 1:  # snelheid naar beneden
+            Wielen.speed_int -= 10
+            print("snelheid omlaag")
+            print(Wielen.speed_int)
+        elif msg.buttons[2] == 1:  # snelheid omhoog
+            Wielen.speed_int += 10
+            print("snelheid omhoog")
+            print(self.speed_int)
+        elif msg.buttons[4] == 1:  # naar voren
+            if GPIO.input(PinLight) == 1:
+                if distance() > max_distance:
+                    while distance() > max_distance:
+                        self.wheels.goForward(Wielen.speed_int)
+                        print(max_distance)
+                    self.wheels.stop()
+                else:
+                    self.wheels.stop()
+        elif msg.buttons[5] == 1:  # naar achter
+            self.wheels.goBackward(Wielen.speed_int)
+        elif msg.buttons[6] == 1:  # naar links
+            self.wheels.goLeft(Wielen.speed_int)
+        elif msg.buttons[7] == 1:  # naar rechts
+            self.wheels.goRight(Wielen.speed_int)
+        elif msg.buttons[0]:  # stoppen
+            self.wheels.stop()
 
+        elif msg.axes[1] > 0.10:
+            speed = msg.axes[1] * 100
+            self.wheels.goForward(speed)
+
+        elif msg.axes[1] < -0.10:
+            speed = msg.axes[1] * -100
+            self.wheels.goBackward(speed)
+        elif msg.axes[0] > 0.10:
+            speed = msg.axes[0] * 100
+            self.wheels.goLeft(speed)
+        elif msg.axes[0] < -0.10:
+            speed = msg.axes[0] * -100
+            self.wheels.goRight(speed)
+        elif abs(msg.axes[0] < 0.10) & abs(msg.axes[1] < 0.10):
+            self.wheels.stop()
+
+
+# class om de motors aan te sturen
 class Motor:
     def __init__(self, pinFwd, pinBack, frequency=20, maxSpeed=100):
         #  Stelt de GPIO in
@@ -138,7 +153,7 @@ class Motor:
             self._pwmBack.ChangeDutyCycle(0)
 
 
-# class om de wielen aan te sturen
+# class om de wielen te laten rijden
 class Wheels:
     def __init__(self):
         self.rightWheel = Motor(10, 9)
@@ -148,19 +163,19 @@ class Wheels:
         self.leftWheel.stop()
         self.rightWheel.stop()
 
-    def goForward(self, speed=40):
+    def goForward(self, speed):
         self.rightWheel.forwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goBackward(self, speed=40):
+    def goBackward(self, speed):
         self.rightWheel.backwards(speed)
         self.leftWheel.backwards(speed)
 
-    def goRight(self, speed=40):
+    def goRight(self, speed):
         self.rightWheel.backwards(speed)
         self.leftWheel.forwards(speed)
 
-    def goLeft(self, speed=40):
+    def goLeft(self, speed):
         self.rightWheel.forwards(speed)
         self.leftWheel.backwards(speed)
 
@@ -196,11 +211,8 @@ def distance():
 def main(args=None):
     rclpy.init(args=args)
     rclpy.spin(Wielen())
-
     Wielen().wheels.stop()
     Wielen().destroy_node()
-    Sensor().distance() == 10
-    Sensor().destroy_node()
     GPIO.cleanup()
     rclpy.shutdown()
 
