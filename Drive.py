@@ -48,10 +48,7 @@ class Wielen(Node):
 
         elif msg.axes[1] > 0.10:
             speed = msg.axes[1] * 100
-            if distance() > max_distance:
-                self.wheels.goForward(speed)
-            else:
-                self.wheels.stop()
+            self.wheels.goForward(speed)
         elif msg.axes[1] < -0.10:
             speed = msg.axes[1] * -100
             self.wheels.goBackward(speed)
