@@ -25,40 +25,13 @@ class Wielen(Node):
     speed_int = 40  # variable om de snelheid makkelijk aan te passen
 
     def __init__(self):
-        super().__init__("_Wielen_")
-        self.subscription = self.create_subscription(
-            String, "Rijden", self.listener_callback_Wielen, 10
-        )
+        super().__init__("_Robot_")
+
         self.wheels = Wheels()
 
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
-
-    # luisterd naar commands en onderneemd acties op basis van het command
-    def listener_callback_Wielen(self, msg):
-        command = msg.data
-        wheels = Wheels
-        if command == "forward":
-            if GPIO.input(PinLight) == 1:
-                if distance() > max_distance:
-                    self.wheels.goForward(self, Wielen.speed_int)
-                else:
-                    self.wheels.goRight(self, Wielen.speed_int)
-        elif command == "backwards":
-            self.wheels.goBackward(self, Wielen.speed_int)
-        elif command == "stop":
-            self.wheels.stop()
-        elif command == "right":
-            self.wheels.goRight(self, Wielen.speed_int)
-        elif command == "distance1":
-            max_distance += 1
-        elif command == "distancemin1":
-            max_distance -= 1
-        elif command == "distance10":
-            max_distance += 10
-        elif command == "distancemin10":
-            max_distance -= 10
 
     def _joy_callback(self, msg):
         # to-do: uitzoeken welke knop wat is
