@@ -22,7 +22,7 @@ GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
 class Wielen(Node):
-    speed_int = 40  # variable om de snelheid makkelijk aan te passen
+    super().__init__("_Wielen_")
 
     def __init__(self):
         self._joy_subscription = self.create_subscription(
