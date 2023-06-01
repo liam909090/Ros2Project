@@ -27,7 +27,6 @@ class Robot(Node):
         super().__init__("_Robot_")
         self.command = None
         self.wheels = Wheels()
-        self.subscription
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
