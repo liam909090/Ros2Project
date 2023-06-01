@@ -22,7 +22,7 @@ GPIO.setup(PinLight, GPIO.IN)
 
 
 # zet de node op voor ros2
-class Wielen(Node):
+class Robot(Node):
     speed_int = 40  # variable om de snelheid makkelijk aan te passen
 
     def __init__(self):
@@ -140,9 +140,9 @@ class Wheels:
 
 def main(args=None):
     rclpy.init(args=args)
-    rclpy.spin(Wielen())
-    Wielen().wheels.stop()
-    Wielen().destroy_node()
+    rclpy.spin(Robot())
+    Robot().wheels.stop()
+    Robot().destroy_node()
     GPIO.cleanup()
     rclpy.shutdown()
 
