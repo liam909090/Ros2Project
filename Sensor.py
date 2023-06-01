@@ -6,6 +6,7 @@ import rclpy
 import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
+from std_msgs.msg import Int16
 
 pinTrigger = 17
 pinEcho = 18
@@ -19,13 +20,13 @@ GPIO.setup(pinEcho, GPIO.IN)
 class Sonic_sensor(Node):
     def __init__(self):
         super().__init__("sonic_sensor")
-        self.publisher_ = self.create_publisher(String, "Afstand", 10)
+        self.publisher_ = self.create_publisher(Int16, "Afstand", 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self._Afstand_publisher)
         self.i = 0
 
     def _Afstand_publisher(self):
-        msg = String()
+        msg = Int16()
         msg.data = Sonic_sensor.distance()
         self.publisher_.publish(msg)
 
