@@ -32,6 +32,14 @@ class Wielen(Node):
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
+        self.subscription = self.create_subscription(
+            Int16, "Afstand", self.Sonic_Sensor_callback, 10
+        )
+
+    def Sonic_Sensor_callback(self, msg):
+        command = msg.data
+        if command > 10:
+            self.wheels.stop()
 
     def _joy_callback(self, msg):
         # to-do: uitzoeken welke knop wat is
@@ -126,34 +134,6 @@ class Wheels:
     def goLeft(self, speed):
         self.rightWheel.forwards(speed)
         self.leftWheel.backwards(speed)
-
-
-def distance():
-    GPIO.output(pinTrigger, False)
-    time.sleep(0.5)
-
-    #  Stuurt een pulse
-    print("send pulse")
-    GPIO.output(pinTrigger, True)
-    time.sleep(0.00001)
-    GPIO.output(pinTrigger, False)
-
-    #  wacht tot de echo terug komt
-    StartTime = time.time()
-    while GPIO.input(pinEcho) == 0:
-        StartTime = time.time()
-    StopTime = time.time()
-    while GPIO.input(pinEcho) == 1:
-        StopTime = time.time()
-        if StopTime - StartTime >= 0.04:
-            StopTime = StartTime
-            print("Too Close")
-            break
-
-    ElapsedTime = StopTime - StartTime
-    distanceIPS = ElapsedTime * 13504 / 2
-    print("%.1f in" % distanceIPS)
-    return distanceIPS
 
 
 def main(args=None):
