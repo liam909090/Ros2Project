@@ -7,6 +7,7 @@ import RPi.GPIO as GPIO
 from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
+from std_msgs.msg import Int16
 
 pinTrigger = 17
 pinEcho = 18
