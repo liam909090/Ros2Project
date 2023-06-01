@@ -24,7 +24,7 @@ GPIO.setup(PinLight, GPIO.IN)
 # zet de node op voor ros2
 class Robot(Node):
     def __init__(self):
-        super().__init__("_Robot_")
+        super().__init__("Robot")
         self.command = None
         self.wheels = Wheels()
         self._joy_subscription = self.create_subscription(
