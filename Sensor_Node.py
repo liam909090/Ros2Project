@@ -19,6 +19,22 @@ GPIO.setup(pinTrigger, GPIO.OUT)
 GPIO.setup(pinEcho, GPIO.IN)
 GPIO.setup(PinLight, GPIO.IN)
 
+class MinimalPublisher(Node): # aanmaken node
+
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = 'Hello World: %d' % self.i
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
 class Sensor(Node):
     def __init__(self):
         super().__init__("_Sensor_")
@@ -28,30 +44,31 @@ class Sensor(Node):
         )
     
     def _Sensor_callback(self, msg):
-    
-def distance():
-    GPIO.output(pinTrigger, False)
-    time.sleep(0.5)
+        if distance() < 10:
 
-    #  Stuurt een pulse
-    print("send pulse")
-    GPIO.output(pinTrigger, True)
-    time.sleep(0.00001)
-    GPIO.output(pinTrigger, False)
+    def distance():
+        GPIO.output(pinTrigger, False)
+        time.sleep(0.5)
 
-    #  wacht tot de echo terug komt
-    StartTime = time.time()
-    while GPIO.input(pinEcho) == 0:
+        #  Stuurt een pulse
+        print("send pulse")
+        GPIO.output(pinTrigger, True)
+        time.sleep(0.00001)
+        GPIO.output(pinTrigger, False)
+
+        #  wacht tot de echo terug komt
         StartTime = time.time()
-    StopTime = time.time()
-    while GPIO.input(pinEcho) == 1:
+        while GPIO.input(pinEcho) == 0:
+            StartTime = time.time()
         StopTime = time.time()
-        if StopTime - StartTime >= 0.04:
-            StopTime = StartTime
-            print("Too Close")
-            break
+        while GPIO.input(pinEcho) == 1:
+            StopTime = time.time()
+            if StopTime - StartTime >= 0.04:
+                StopTime = StartTime
+                print("Too Close")
+                break
 
-    ElapsedTime = StopTime - StartTime
-    distanceIPS = ElapsedTime * 13504 / 2
-    print("%.1f in" % distanceIPS)
-    return distanceIPS
+        ElapsedTime = StopTime - StartTime
+        distanceIPS = ElapsedTime * 13504 / 2
+        print("%.1f in" % distanceIPS)
+        return distanceIPS
