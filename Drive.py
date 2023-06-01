@@ -41,6 +41,7 @@ class Wielen(Node):
         command = msg.data
         print(command)
         if command < Int16(10):
+            print("stop")
             self.wheels.stop()
 
     def _joy_callback(self, msg):
