@@ -39,9 +39,7 @@ class Wielen(Node):
 
     def Sonic_Sensor_callback(self, msg):
         self.command = msg.data
-        print(self.command)
         if int(self.command) < 10:
-            print("stop")
             self.wheels.stop()
 
     def _joy_callback(self, msg):
