@@ -46,6 +46,7 @@ class Wielen(Node):
         if msg.buttons[0]:  # stoppen
             self.wheels.stop()
         elif msg.axes[1] > 0.10:
+            print(msg.axes[1])
             speed = msg.axes[1] * 100
             self.wheels.goForward(speed)
         elif msg.axes[1] < -0.10:
