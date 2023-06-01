@@ -34,13 +34,13 @@ class Wielen(Node):
             Joy, "joy", self._joy_callback, 5
         )
         self.subscription = self.create_subscription(
-            String, "Afstand", self.Sonic_Sensor_callback, 10
+            Int16, "Afstand", self.Sonic_Sensor_callback, 10
         )
 
     def Sonic_Sensor_callback(self, msg):
         command = msg.data
         print(command)
-        if int(command) < 10:
+        if command < Int16(10):
             self.wheels.stop()
 
     def _joy_callback(self, msg):
