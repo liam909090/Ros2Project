@@ -23,13 +23,11 @@ GPIO.setup(PinLight, GPIO.IN)
 
 # zet de node op voor ros2
 class Robot(Node):
-    speed_int = 40  # variable om de snelheid makkelijk aan te passen
-
     def __init__(self):
         super().__init__("_Robot_")
         self.command = None
         self.wheels = Wheels()
-
+        self.subscription
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
