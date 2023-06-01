@@ -47,10 +47,6 @@ class Sonic_sensor(Node):
         StopTime = time.time()
         while GPIO.input(pinEcho) == 1:
             StopTime = time.time()
-            if StopTime - StartTime >= 0.04:
-                StopTime = StartTime
-                print("Too Close")
-                break
 
         ElapsedTime = StopTime - StartTime
         distanceIPS = ElapsedTime * 13504 / 2
