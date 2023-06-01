@@ -27,8 +27,8 @@ class Sonic_sensor(Node):
 
     def _Afstand_publisher(self):
         msg = Int16()
-        msg.data = Sonic_sensor.distance()
-        self.publisher_.publish(int(msg))
+        msg.data = int(Sonic_sensor.distance())
+        self.publisher_.publish(msg)
 
     def distance():
         GPIO.output(pinTrigger, False)
