@@ -27,7 +27,7 @@ class Wielen(Node):
 
     def __init__(self):
         super().__init__("_Robot_")
-
+        self.command = None
         self.wheels = Wheels()
 
         self._joy_subscription = self.create_subscription(
@@ -38,9 +38,9 @@ class Wielen(Node):
         )
 
     def Sonic_Sensor_callback(self, msg):
-        command = msg.data
-        print(command)
-        if int(command) < 10:
+        self.command = msg.data
+        print(self.command)
+        if int(self.command) < 10:
             print("stop")
             self.wheels.stop()
 
@@ -58,7 +58,8 @@ class Wielen(Node):
             self.wheels.stop()
         elif msg.axes[1] > 0.10:
             speed = msg.axes[1] * 100
-            self.wheels.goForward(speed)
+            if self.command() < 10:
+                self.wheels.goForward(speed)
         elif msg.axes[1] < -0.10:
             speed = msg.axes[1] * -100
             self.wheels.goBackward(speed)
