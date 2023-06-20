@@ -1,11 +1,9 @@
 #! /usr/bin/python3
 
 # impoteerd modules
-import time
 import rclpy
 import RPi.GPIO as GPIO
 from rclpy.node import Node
-from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Int16
 
@@ -75,7 +73,7 @@ class Motor:
         GPIO.setup(pinFwd, GPIO.OUT)
         GPIO.setup(pinBack, GPIO.OUT)
 
-        #  Get a handle to PWM
+        #  PWM
         self._frequency = frequency
         self._maxSpeed = maxSpeed
         self._pwmFwd = GPIO.PWM(pinFwd, frequency)

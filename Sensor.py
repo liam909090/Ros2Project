@@ -21,7 +21,7 @@ class Sonic_sensor(Node):
     def __init__(self):
         super().__init__("sonic_sensor")
         self.publisher_ = self.create_publisher(Int16, "Afstand", 10)
-        timer_period = 0.5  # seconds
+        timer_period = 0.2  # seconden
         self.timer = self.create_timer(timer_period, self._Afstand_publisher)
         self.i = 0
 
