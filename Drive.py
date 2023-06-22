@@ -25,18 +25,22 @@ class Robot(Node):
         super().__init__("Robot")
         self.command = None
         self.wheels = Wheels()
+        # luisterd naar de topic joy
         self._joy_subscription = self.create_subscription(
             Joy, "joy", self._joy_callback, 5
         )
+        # luisterd naar de topic afstand
         self.subscription = self.create_subscription(
             Int16, "Afstand", self.Sonic_Sensor_callback, 10
         )
 
+    # verwerkt de data van topic Afstand
     def Sonic_Sensor_callback(self, msg):
         self.command = msg.data
         if int(self.command) < 10:
             self.wheels.stop()
 
+    # verwerkt de data van topic Joy
     def _joy_callback(self, msg):
         # to-do: uitzoeken welke knop wat is
         # Knop 0 = vierkant

@@ -18,6 +18,7 @@ GPIO.setup(pinEcho, GPIO.IN)
 
 
 class Sonic_sensor(Node):
+    # published de data van de afstand sensor naar de topic Afstand
     def __init__(self):
         super().__init__("sonic_sensor")
         self.publisher_ = self.create_publisher(Int16, "Afstand", 10)
